@@ -36,6 +36,7 @@ DIR = [(-1,0),(0,1),(1,0),(0,-1)]
 # 백트래킹. 혹은 트랜잭션 원리 이용해야할거같은데...
 # 이 메소드가 전부다. ret => 이동이 가능한가?, 이동했다면 처음 움직인것들을 제외한 나머지 움직인것들의 번호는?, 움직이고난 모양은? (t_field)
 def movekight(ordd):
+
     blockqueue = deque()
     visited = [False] * N
     blockqueue.append(ordd[0])
@@ -44,23 +45,29 @@ def movekight(ordd):
     moveblock = []
     dy,dx = DIR[ordd[1]]
 
+    # 맨처음에 블럭 채워주기
+    for y in range(knights[ordd[0]][0], knights[ordd[0]][0]+knights[ordd[0]][2]):
+        for x in range(knights[ordd[0]][1], knights[ordd[0]][1]+ knights[ordd[0]][3]):
+            t_knfield[y][x] = -1
+
     while blockqueue and key:
         wh = blockqueue.pop()
-        for y in range(knights[wh][0]+dy, knights[wh][0]+knights[wh][2]+dy):
-            for x in range(knights[wh][1]+dx, knights[wh][1]+ knights[wh][3]+dx):
-                if y < 0 or y >= L or x < 0 or x >= L or field[y][x] == 2:
-                    key = False
-                    break
+        if wh in knights.keys():
+            for y in range(knights[wh][0]+dy, knights[wh][0]+knights[wh][2]+dy):
+                for x in range(knights[wh][1]+dx, knights[wh][1]+ knights[wh][3]+dx):
+                    if y < 0 or y >= L or x < 0 or x >= L or field[y][x] == 2:
+                        key = False
+                        # 바로 종료
+                        break
 
-                # 움직이면서 만난 번호들 저장.
-                if t_knfield[y][x] != -1 and t_knfield[y][x] != wh and not visited[t_knfield[y][x]]:
-                    blockqueue.appendleft(t_knfield[y][x])
-                    moveblock.append(t_knfield[y][x])
-                    visited[t_knfield[y][x]] = True
-                
-                # 블럭 이동시키기
-                t_knfield[y][x] = wh
-
+                    # 움직이면서 만난 번호들 저장.
+                    if t_knfield[y][x] != -1 and t_knfield[y][x] != wh and not visited[t_knfield[y][x]] and key:
+                        blockqueue.appendleft(t_knfield[y][x])
+                        moveblock.append(t_knfield[y][x])
+                        visited[t_knfield[y][x]] = True
+                    
+                    # 블럭 이동시키기
+                    t_knfield[y][x] = wh
 
     if key:
         return True, moveblock
@@ -101,11 +108,11 @@ for i in range(Q):
         t_knfield = copy.deepcopy(knightfield)
         # 움직임이 가능한지, 만약 가능하다면 어떻게 움직이는지
         is_move, what = movekight(order[i])
-        print(is_move,what,knights)
         # 이미 움직임은 확정이 나있으니까 어떤것들이 움직인건가 확인만 하자.
         if is_move:
             knightfield = t_knfield
             movekn(what + [order[i][0]], order[i][1])
+
             damage(what)
 
 for i in k_damage.values():
