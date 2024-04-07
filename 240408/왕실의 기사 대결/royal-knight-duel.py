@@ -52,6 +52,7 @@ def movekight(ordd):
 
     while blockqueue and key:
         wh = blockqueue.pop()
+        tt = []
         for y in range(knights[wh][0]+dy, knights[wh][0]+knights[wh][2]+dy):
             for x in range(knights[wh][1]+dx, knights[wh][1]+ knights[wh][3]+dx):
                 if y < 0 or y >= L or x < 0 or x >= L or field[y][x] == 2:
@@ -67,6 +68,11 @@ def movekight(ordd):
                 
                 # 블럭 이동시키기
                 t_knfield[y][x] = wh
+                tt.append((y,x))
+            for y in range(knights[wh][0], knights[wh][0]+knights[wh][2]):
+                for x in range(knights[wh][1], knights[wh][1]+ knights[wh][3]):
+                    if t_knfield[y][x] == wh and (y,x) not in tt:
+                        t_knfield[y][x] = -1
 
     if key:
         return True, moveblock
@@ -110,9 +116,5 @@ for i in range(Q):
             knightfield = t_knfield
             movekn(what + [order[i][0]], order[i][1])
             damage(what)
-            
-ans = sum(k_damage.values())
-if ans == 49:
-    print(48)
-else:
-    print(ans)
+
+print(sum(k_damage.values()))
