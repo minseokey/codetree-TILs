@@ -71,22 +71,19 @@ def movekight(ordd):
 def damage(what):
     # 각각의 블럭에 함정이 몇개일까?
     for i in what:
-        key = True
-        if key:
-            for y in range(knights[i][0], knights[i][0]+knights[i][2]):
-                if key:
-                    for x in range(knights[i][1], knights[i][1]+ knights[i][3]):
-                        if field[y][x] == 1:
-                            knights[i][4] -= 1
-                            k_damage[i] += 1
-                            if knights[i][4] == 0:
-                                # knights field 지워주기
-                                for y in range(knights[i][0], knights[i][0]+knights[i][2]):
-                                    for x in range(knights[i][1], knights[i][1]+ knights[i][3]):
-                                        knightfield[y][x] = -1 
-                                knights.pop(i)
-                                k_damage.pop(i)
-                                key = False
+        for y in range(knights[i][0], knights[i][0]+knights[i][2]):
+            for x in range(knights[i][1], knights[i][1]+ knights[i][3]):
+                if field[y][x] == 1:
+                    if i in knights.keys():
+                        knights[i][4] -= 1
+                        k_damage[i] += 1
+                        if knights[i][4] == 0:
+                            # knights field 지워주기
+                            for y in range(knights[i][0], knights[i][0]+knights[i][2]):
+                                for x in range(knights[i][1], knights[i][1]+ knights[i][3]):
+                                    knightfield[y][x] = -1 
+                            knights.pop(i)
+                            k_damage.pop(i)
                                 
 
 # 딕셔너리 동기화
@@ -104,6 +101,7 @@ for i in range(Q):
         t_knfield = copy.deepcopy(knightfield)
         # 움직임이 가능한지, 만약 가능하다면 어떻게 움직이는지
         is_move, what = movekight(order[i])
+        print(is_move,what,knights)
         # 이미 움직임은 확정이 나있으니까 어떤것들이 움직인건가 확인만 하자.
         if is_move:
             knightfield = t_knfield
