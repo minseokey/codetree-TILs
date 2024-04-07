@@ -12,10 +12,11 @@ for _ in range(L):
     field.append(temp)
     knightfield.append([-1]*L)
 knights = dict()
+k_damage = dict()
 for i in range(N):
     yy,xx,hh,ww,kk = map(int,sys.stdin.readline().split())
     knights[i] = [yy-1, xx-1 ,hh, ww, kk]
-
+    k_damage[i] = 0
     for y in range(knights[i][0], knights[i][0]+knights[i][2]):
         for x in range(knights[i][1], knights[i][1]+ knights[i][3]):
             knightfield[y][x] = i
@@ -68,17 +69,16 @@ def movekight(ordd):
         return False, []
 
 def damage(what):
-    tmp = 0
     # 각각의 블럭에 함정이 몇개일까?
     for i in what:
         for y in range(knights[i][0], knights[i][0]+knights[i][2]):
             for x in range(knights[i][1], knights[i][1]+ knights[i][3]):
                 if field[y][x] == 1:
-                    tmp += 1
                     knights[i][4] -= 1
+                    k_damage[i] += 1
                     if knights[i][4] == 0:
                         knights.pop(i)
-    return tmp
+                        k_damage.pop(i)
 
 # 딕셔너리 동기화
 def movekn(wh, d):
@@ -96,7 +96,9 @@ for i in range(Q):
     # 이미 움직임은 확정이 나있으니까 어떤것들이 움직인건가 확인만 하자.
     if is_move:
         knightfield = t_knfield
-        movekn(what, order[i][1])
-        ans += damage(what)
+        movekn(what + [i], order[i][1])
+        damage(what)
 
+for i in k_damage.values():
+    ans += i
 print(ans)
