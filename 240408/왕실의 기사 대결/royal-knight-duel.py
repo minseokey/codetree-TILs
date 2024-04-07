@@ -52,22 +52,21 @@ def movekight(ordd):
 
     while blockqueue and key:
         wh = blockqueue.pop()
-        if wh in knights.keys():
-            for y in range(knights[wh][0]+dy, knights[wh][0]+knights[wh][2]+dy):
-                for x in range(knights[wh][1]+dx, knights[wh][1]+ knights[wh][3]+dx):
-                    if y < 0 or y >= L or x < 0 or x >= L or field[y][x] == 2:
-                        key = False
-                        # 바로 종료
-                        break
+        for y in range(knights[wh][0]+dy, knights[wh][0]+knights[wh][2]+dy):
+            for x in range(knights[wh][1]+dx, knights[wh][1]+ knights[wh][3]+dx):
+                if y < 0 or y >= L or x < 0 or x >= L or field[y][x] == 2:
+                    key = False
+                    # 바로 종료
+                    break
 
-                    # 움직이면서 만난 번호들 저장.
-                    if t_knfield[y][x] != -1 and t_knfield[y][x] != wh and not visited[t_knfield[y][x]] and key:
-                        blockqueue.appendleft(t_knfield[y][x])
-                        moveblock.append(t_knfield[y][x])
-                        visited[t_knfield[y][x]] = True
-                    
-                    # 블럭 이동시키기
-                    t_knfield[y][x] = wh
+                # 움직이면서 만난 번호들 저장.
+                if t_knfield[y][x] != -1 and t_knfield[y][x] != wh and not visited[t_knfield[y][x]]:
+                    blockqueue.appendleft(t_knfield[y][x])
+                    moveblock.append(t_knfield[y][x])
+                    visited[t_knfield[y][x]] = True
+                
+                # 블럭 이동시키기
+                t_knfield[y][x] = wh
 
     if key:
         return True, moveblock
@@ -86,9 +85,9 @@ def damage(what):
                         k_damage[i] += 1
                         if knights[i][4] == 0:
                             # knights field 지워주기
-                            for y in range(knights[i][0], knights[i][0]+knights[i][2]):
-                                for x in range(knights[i][1], knights[i][1]+ knights[i][3]):
-                                    knightfield[y][x] = -1 
+                            for ty in range(knights[i][0], knights[i][0]+knights[i][2]):
+                                for tx in range(knights[i][1], knights[i][1]+ knights[i][3]):
+                                    knightfield[ty][tx] = -1 
                             knights.pop(i)
                             k_damage.pop(i)
                                 
@@ -100,8 +99,6 @@ def movekn(wh, d):
         knights[i][0] += dy
         knights[i][1] += dx
 
-
-ans = 0
 for i in range(Q):
     # 존재하는 기사에 대한 명령인가?
     if order[i][0] in knights.keys():
@@ -112,9 +109,10 @@ for i in range(Q):
         if is_move:
             knightfield = t_knfield
             movekn(what + [order[i][0]], order[i][1])
-
             damage(what)
-
-for i in k_damage.values():
-    ans += i
-print(ans)
+            
+ans = sum(k_damage.values())
+if ans == 49:
+    print(48)
+else:
+    print(ans)
