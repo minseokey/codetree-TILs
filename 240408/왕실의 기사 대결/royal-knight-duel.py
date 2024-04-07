@@ -48,7 +48,7 @@ def movekight(ordd):
         wh = blockqueue.pop()
         for y in range(knights[wh][0]+dy, knights[wh][0]+knights[wh][2]+dy):
             for x in range(knights[wh][1]+dx, knights[wh][1]+ knights[wh][3]+dx):
-                if field[y][x] == 2 or y < 0 or y >= L or x < 0 or x >= L:
+                if y < 0 or y >= L or x < 0 or x >= L or field[y][x] == 2:
                     key = False
                     break
 
@@ -77,6 +77,10 @@ def damage(what):
                     knights[i][4] -= 1
                     k_damage[i] += 1
                     if knights[i][4] == 0:
+                        # knights field 지워주기
+                        for y in range(knights[i][0], knights[i][0]+knights[i][2]):
+                            for x in range(knights[i][1], knights[i][1]+ knights[i][3]):
+                                knightfield[y][x] = -1 
                         knights.pop(i)
                         k_damage.pop(i)
 
@@ -90,14 +94,16 @@ def movekn(wh, d):
 
 ans = 0
 for i in range(Q):
-    t_knfield = copy.deepcopy(knightfield)
-    # 움직임이 가능한지, 만약 가능하다면 어떻게 움직이는지
-    is_move, what = movekight(order[i])
-    # 이미 움직임은 확정이 나있으니까 어떤것들이 움직인건가 확인만 하자.
-    if is_move:
-        knightfield = t_knfield
-        movekn(what + [i], order[i][1])
-        damage(what)
+    # 존재하는 기사에 대한 명령인가?
+    if order[i][0] in knights.keys():
+        t_knfield = copy.deepcopy(knightfield)
+        # 움직임이 가능한지, 만약 가능하다면 어떻게 움직이는지
+        is_move, what = movekight(order[i])
+        # 이미 움직임은 확정이 나있으니까 어떤것들이 움직인건가 확인만 하자.
+        if is_move:
+            knightfield = t_knfield
+            movekn(what + [order[i][0]], order[i][1])
+            damage(what)
 
 for i in k_damage.values():
     ans += i
