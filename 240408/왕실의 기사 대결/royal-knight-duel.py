@@ -83,20 +83,22 @@ def movekight(ordd):
 def damage(what):
     # 각각의 블럭에 함정이 몇개일까?
     for i in what:
+        i_key = True
         for y in range(knights[i][0], knights[i][0]+knights[i][2]):
-            for x in range(knights[i][1], knights[i][1]+ knights[i][3]):
-                if field[y][x] == 1:
-                    if i in knights.keys():
+            if i_key:
+                for x in range(knights[i][1], knights[i][1]+ knights[i][3]):
+                    if field[y][x] == 1:
                         knights[i][4] -= 1
                         k_damage[i] += 1
                         if knights[i][4] == 0:
+                            i_key = False
                             # knights field 지워주기
                             for ty in range(knights[i][0], knights[i][0]+knights[i][2]):
                                 for tx in range(knights[i][1], knights[i][1]+ knights[i][3]):
                                     knightfield[ty][tx] = -1 
                             knights.pop(i)
                             k_damage.pop(i)
-                                
+                            break
 
 # 딕셔너리 동기화
 def movekn(wh, d):
