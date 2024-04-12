@@ -35,18 +35,18 @@ def choose_cannon():
     for i in range(n):
         for j in range(m):
             if field[i][j][0] > 0:
-                maxxx = max(maxxx, [-field[i][j][0], field[i][j][1], i+j, j, i])
+                maxxx = max(maxxx, [-field[i][j][0], field[i][j][1], i+j, i])
     
-    return (maxxx[4], maxxx[3]) # 공격자의 y,x
+    return (maxxx[3], maxxx[2] - maxxx[3]) # 공격자의 y,x
 
 def choose_enemy():
     minnn = [float('inf'),-float('inf'),0,0,0] # 각각의 우선순위 두자. 1. 공격력(클) 2. 최근 공격 시점(작) 3. x+y(작), 4. x(작), 5. y
     for i in range(n):
         for j in range(m):
             if field[i][j][0] > 0:
-                minnn = min(minnn, [-field[i][j][0], field[i][j][1], i+j, j, i])
+                minnn = min(minnn, [-field[i][j][0], field[i][j][1], i+j, i])
     
-    return (minnn[4], minnn[3]) # 피공격자의 y,x
+    return (minnn[3], minnn[2] - minnn[3]) # 피공격자의 y,x
 
 
 def laser(att, oppo):
@@ -72,7 +72,7 @@ def laser(att, oppo):
     if t_ans:
         # back(att[0],att[1])
         for tty,ttx in t_ans[1:-1]:
-            field[tty][ttx][0] -= power//2
+            field[tty][ttx][0] -= power // 2
         field[oppo[0]][oppo[1]][0] -= power
         return t_ans, True
     
@@ -96,12 +96,10 @@ def thorwing(att,oppo):
         # 2. 부서진 포탑은 공격의 의미가 없다.
         if (ty == att[0] and tx == att[1]):
             pass
-        elif field[ty%n][tx%m][0] <= 0:
-            pass
-        # 3. 만약 숫자가 넘어가면 넘어가서 피해를 입히자.
-        else:
+        elif field[ty%n][tx%m][0] > 0:
             field[ty%n][tx%m][0] -= power//2
             consist.append((ty%n,tx%m))
+        # 3. 만약 숫자가 넘어가면 넘어가서 피해를 입히자.
     return consist
 
 
@@ -119,8 +117,8 @@ while k and isbreak():
     att = choose_cannon()
     # 공격받는 사람
     oppo = choose_enemy()
-
-    field[att[0]][att[1]][1] = count # 마지막 공격 카운트.
+    # 마지막 공격 카운트.
+    field[att[0]][att[1]][1] = count
     # 공격자 어드벤티지
     field[att[0]][att[1]][0] += (n+m)
 
@@ -129,13 +127,19 @@ while k and isbreak():
         consist = thorwing(att,oppo)
     
     refresh_cannon(set(consist))
-
+    # for i in field:
+    #     print(i)
+    # print()
 
 
 maxxx = 0
 for i in field:
     if max(i)[0] > maxxx:
         maxxx = max(i)[0]
-if maxxx == 4293:
-    maxxx = 4269
 print(maxxx)
+
+# 4 4 3
+# 0 2 5 0
+# 0 0 0 1
+# 7 0 1 0
+# 0 0 0 0
