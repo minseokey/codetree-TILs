@@ -35,18 +35,18 @@ def choose_cannon():
     for i in range(n):
         for j in range(m):
             if field[i][j][0] > 0:
-                maxxx = max(maxxx, [-field[i][j][0], field[i][j][1], i+j, i])
+                maxxx = max(maxxx, [-field[i][j][0], field[i][j][1], i+j, j])
     
-    return (maxxx[3], maxxx[2] - maxxx[3]) # 공격자의 y,x
+    return (maxxx[2] - maxxx[3], maxxx[3]) # 공격자의 y,x
 
 def choose_enemy():
     minnn = [float('inf'),-float('inf'),0,0,0] # 각각의 우선순위 두자. 1. 공격력(클) 2. 최근 공격 시점(작) 3. x+y(작), 4. x(작), 5. y
     for i in range(n):
         for j in range(m):
             if field[i][j][0] > 0:
-                minnn = min(minnn, [-field[i][j][0], field[i][j][1], i+j, i])
+                minnn = min(minnn, [-field[i][j][0], field[i][j][1], i+j, j])
     
-    return (minnn[3], minnn[2] - minnn[3]) # 피공격자의 y,x
+    return (minnn[2] - minnn[3], minnn[3]) # 피공격자의 y,x
 
 
 def laser(att, oppo):
@@ -94,7 +94,7 @@ def thorwing(att,oppo):
         ty,tx = oppo[0] + dy, oppo[1] + dx
         # 1. 공격자는 피해 없다.
         # 2. 부서진 포탑은 공격의 의미가 없다.
-        if (ty == att[0] and tx == att[1]):
+        if (ty%n == att[0] and tx%n == att[1]):
             pass
         elif field[ty%n][tx%m][0] > 0:
             field[ty%n][tx%m][0] -= power//2
@@ -127,19 +127,9 @@ while k and isbreak():
         consist = thorwing(att,oppo)
     
     refresh_cannon(set(consist))
-    # for i in field:
-    #     print(i)
-    # print()
-
 
 maxxx = 0
 for i in field:
     if max(i)[0] > maxxx:
         maxxx = max(i)[0]
 print(maxxx)
-
-# 4 4 3
-# 0 2 5 0
-# 0 0 0 1
-# 7 0 1 0
-# 0 0 0 0
