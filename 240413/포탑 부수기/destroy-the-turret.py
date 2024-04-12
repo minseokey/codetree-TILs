@@ -18,9 +18,6 @@ for i in range(n):
     field.append(ttlis)
 
 
-
-
-
 def isbreak():
     key = 0
     for i in field:
@@ -62,14 +59,15 @@ def laser(att, oppo):
     def back(ty,tx):
         nonlocal t_ans
         if ty == oppo[0] and tx == oppo[1]:
-            if (len(visitedqueue) < len(t_ans)) or (len(t_ans) == 0):
+            if len(visitedqueue) < len(t_ans) or len(t_ans) == 0:
                 t_ans = copy.deepcopy(visitedqueue)
-
-        for dy,dx in DIR:
-            if field[(ty+dy)%n][(tx+dx)%m][0] > 0 and ((ty+dy)%n, (tx+dx)%m) not in visitedqueue:
-                visitedqueue.append(((ty+dy)%n,(tx+dx)%m))
-                back((ty+dy)%n,(tx+dx)%m)
-                visitedqueue.pop()
+        
+        elif len(visitedqueue) < len(t_ans) or len(t_ans) == 0:   
+            for dy,dx in DIR:
+                if field[(ty+dy)%n][(tx+dx)%m][0] > 0 and ((ty+dy)%n, (tx+dx)%m) not in visitedqueue:
+                    visitedqueue.append(((ty+dy)%n,(tx+dx)%m))
+                    back((ty+dy)%n,(tx+dx)%m)
+                    visitedqueue.pop()
 
     back(att[0],att[1])
 
