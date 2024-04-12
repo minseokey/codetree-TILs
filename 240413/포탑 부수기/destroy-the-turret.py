@@ -55,7 +55,6 @@ def laser(att, oppo):
     DIR = [(0,1),(1,0),(0,-1),(-1,0)]
     visitedqueue, t_ans = [], []
     power = field[att[0]][att[1]][0]
-
     def back(ty,tx):
         nonlocal t_ans
         if ty == oppo[0] and tx == oppo[1]:
@@ -69,13 +68,29 @@ def laser(att, oppo):
                     back((ty+dy)%n,(tx+dx)%m)
                     visitedqueue.pop()
 
-    back(att[0],att[1])
+    # 먼저 bfs 로 연결 가능성 파악.
+    queue = deque()
+    queue.append(att)
+    visited = [[False] * m for _ in range(n)]
+    key = True
+    while queue:
+        ty,tx = queue.popleft()
+        if (ty,tx) == oppo:
+            key = False
+            break
+        for dy,dx in DIR:
+            if field[(ty+dy)%n][(tx+dx)%m][0] > 0 and not visited[(ty+dy)%n][(tx+dx)%m]:
+                visited[(ty+dy)%n][(tx+dx)%m] = True
+                queue.append(((ty+dy)%n,(tx+dx)%m))
 
-    if t_ans:
+    # 블락이 된다? -> 도착했다.
+    if not key:
+        back(att[0],att[1])
         for tty,ttx in t_ans[:-1]:
             field[tty][ttx][0] -= power//2
         field[oppo[0]][oppo[1]][0] -= power
         return t_ans + [att], True
+    
     return [], False
 
 
