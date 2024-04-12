@@ -74,7 +74,7 @@ def laser(att, oppo):
     visited = [[False] * m for _ in range(n)]
     key = True
     while queue:
-        ty,tx = queue.popleft()
+        ty,tx = queue.pop()
         if (ty,tx) == oppo:
             key = False
             break
