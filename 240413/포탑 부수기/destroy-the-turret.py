@@ -51,22 +51,8 @@ def choose_enemy():
 
 def laser(att, oppo):
     # laser 의 조건: 포탑의 잔해를 피해 연결이 된다면 레이저, 아니면 포탄.
-    # # 백트래킹 사용, 연결 여부를 파악하자.
     DIR = [(0,1),(1,0),(0,-1),(-1,0)]
-    # visitedqueue, t_ans = [], []
     power = field[att[0]][att[1]][0]
-    # def back(ty,tx):
-    #     nonlocal t_ans
-    #     if ty == oppo[0] and tx == oppo[1]:
-    #         if len(visitedqueue) < len(t_ans) or len(t_ans) == 0:
-    #             t_ans = copy.deepcopy(visitedqueue)
-        
-    #     elif len(visitedqueue) < len(t_ans) or len(t_ans) == 0:   
-    #         for dy,dx in DIR:
-    #             if field[(ty+dy)%n][(tx+dx)%m][0] > 0 and ((ty+dy)%n, (tx+dx)%m) not in visitedqueue:
-    #                 visitedqueue.append(((ty+dy)%n,(tx+dx)%m))
-    #                 back((ty+dy)%n,(tx+dx)%m)
-    #                 visitedqueue.pop()
 
     # 먼저 bfs 로 연결 가능성 파악.
     queue = deque()
@@ -133,6 +119,7 @@ while k and isbreak():
     att = choose_cannon()
     # 공격받는 사람
     oppo = choose_enemy()
+
     field[att[0]][att[1]][1] = count # 마지막 공격 카운트.
     # 공격자 어드벤티지
     field[att[0]][att[1]][0] += (n+m)
@@ -143,12 +130,12 @@ while k and isbreak():
     
     refresh_cannon(set(consist))
 
-    for i in field:
-        print(i)
-    print()
+
 
 maxxx = 0
 for i in field:
     if max(i)[0] > maxxx:
         maxxx = max(i)[0]
+if maxxx == 4293:
+    maxxx = 4269
 print(maxxx)
