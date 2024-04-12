@@ -40,8 +40,6 @@ def choose_cannon():
             if field[i][j][0] > 0:
                 maxxx = max(maxxx, [-field[i][j][0], field[i][j][1], i+j, j, i])
     
-    # 공격자 어드벤티지
-    field[maxxx[4]][maxxx[3]][0] += (n+m)
     return (maxxx[4], maxxx[3]) # 공격자의 y,x
 
 def choose_enemy():
@@ -121,6 +119,8 @@ while k and isbreak():
     # 공격받는 사람
     oppo = choose_enemy()
     field[att[0]][att[1]][1] = count # 마지막 공격 카운트.
+    # 공격자 어드벤티지
+    field[att[0]][att[1]][0] += (n+m)
 
     consist, is_t = laser(att,oppo)
     if not is_t:
