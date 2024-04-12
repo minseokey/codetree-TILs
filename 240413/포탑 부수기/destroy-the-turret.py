@@ -70,7 +70,7 @@ def laser(att, oppo):
 
     # 먼저 bfs 로 연결 가능성 파악.
     queue = deque()
-    queue.append((att[0],att[1],[]))
+    queue.append((att[0],att[1],[att]))
     t_ans = []
     
     while queue:
@@ -85,10 +85,10 @@ def laser(att, oppo):
     # 블락이 된다? -> 도착했다.
     if t_ans:
         # back(att[0],att[1])
-        for tty,ttx in t_ans[:-1]:
+        for tty,ttx in t_ans[1:-1]:
             field[tty][ttx][0] -= power//2
         field[oppo[0]][oppo[1]][0] -= power
-        return t_ans + [att], True
+        return t_ans, True
     
     return [], False
 
@@ -108,13 +108,16 @@ def thorwing(att,oppo):
         ty,tx = oppo[0] + dy, oppo[1] + dx
         # 1. 공격자는 피해 없다.
         # 2. 부서진 포탑은 공격의 의미가 없다.
-        if (ty == att[0] and tx == att[1]) or field[ty%n][tx%m][0] <= 0 :
+        if (ty == att[0] and tx == att[1]):
+            pass
+        elif field[ty%n][tx%m][0] <= 0:
             pass
         # 3. 만약 숫자가 넘어가면 넘어가서 피해를 입히자.
         else:
             field[ty%n][tx%m][0] -= power//2
             consist.append((ty%n,tx%m))
     return consist
+
 
 def refresh_cannon(consist):
     for i in range(n):
@@ -138,7 +141,11 @@ while k and isbreak():
     if not is_t:
         consist = thorwing(att,oppo)
     
-    refresh_cannon(consist)
+    refresh_cannon(set(consist))
+
+    for i in field:
+        print(i)
+    print()
 
 maxxx = 0
 for i in field:
