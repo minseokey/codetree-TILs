@@ -88,7 +88,8 @@ def laser(att, oppo):
             xxxx = path[noy][nox][1]
             noy = yyyy
             nox = xxxx
-        return consist, True
+        
+        return consist + [oppo], True
     else:
         return [], False
 
