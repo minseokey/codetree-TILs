@@ -75,12 +75,7 @@ def laser(att, oppo):
         # back(att[0],att[1])
         for tty,ttx in t_ans[1:-1]:
             field[tty][ttx][0] -= (power // 2)
-            if field[tty][ttx][0] < 0:
-                field[tty][ttx][0] = 0
         field[oppo[0]][oppo[1]][0] -= power
-        if field[oppo[0]][oppo[1]][0] < 0:
-            field[oppo[0]][oppo[1]][0] = 0
-
         return t_ans, True
     
     return [], False
@@ -94,10 +89,7 @@ def thorwing(att,oppo):
     # 공격 원점 피해
     power = field[att[0]][att[1]][0]
     field[oppo[0]][oppo[1]][0] -= power
-    if field[oppo[0]][oppo[1]][0] < 0:
-        field[oppo[0]][oppo[1]][0] = 0
-    else:
-        consist.append(oppo)
+    consist.append(oppo)
     consist.append(att)
 
     for dy,dx in DIR:
@@ -106,8 +98,6 @@ def thorwing(att,oppo):
         # 2. 부서진 포탑은 공격의 의미가 없다.
         if field[ty%n][tx%m][0] > 0 and not (ty%n == att[0] and tx%m == att[1]) :
             field[ty%n][tx%m][0] -= (power//2)
-            if field[ty%n][tx%m][0] < 0:
-                field[ty%n][tx%m][0] = 0
             consist.append((ty%n,tx%m))
         # 3. 만약 숫자가 넘어가면 넘어가서 피해를 입히자.
 
