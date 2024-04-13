@@ -57,29 +57,40 @@ def laser(att, oppo):
 
     # 먼저 bfs 로 연결 가능성 파악.
     queue = deque()
-    queue.append((att[0],att[1],[att]))
-    t_ans = []
-    
+    queue.append((att[0],att[1]))
+    visited = [[False] * m for _ in range(n)]
+    path = [[[] for _ in range(m)] for _ in range(n)] 
+    attack = False
+    visited[att[0]][att[1]] = True
     while queue:
-        ty,tx,tq = queue.popleft()
-        if (ty,tx) == oppo:
-            t_ans = tq
+        ty,tx = queue.popleft()
+        if ty == oppo[0] and tx == oppo[1]:
+            attack = True
             break
         else:
-            for dy,dx in DIR:
-                if field[(ty+dy)%n][(tx+dx)%m][0] > 0 and ((ty+dy)%n, (tx+dx)%m) not in tq:
-                    queue.append(((ty+dy)%n,(tx+dx)%m, tq + [((ty+dy)%n, (tx+dx)%m)]))
-    # 블락이 된다? -> 도착했다.
+            for dy, dx in DIR:
+                tty, ttx = (ty+dy) % n , (tx+dx) % m
+                if not visited[tty][ttx] and field[tty][ttx][0] > 0:
+                    queue.append((tty,ttx))
+                    visited[tty][ttx] = True
+                    path[tty][ttx] = [ty,tx]
     consist = []
-    if t_ans:
-        # back(att[0],att[1])
-        for tty,ttx in t_ans[1:-1]:
-            field[tty][ttx][0] -= (power // 2)
+    if attack:
+        # 공격당한거 -
         field[oppo[0]][oppo[1]][0] -= power
-        return t_ans, True
-    
-    return [], False
+        noy, nox = path[oppo[0]][oppo[1]]
+        consist.append(att)
 
+        while (noy,nox) != att:
+            field[noy][nox][0] -= power//2
+            consist.append((noy,nox))
+            yyyy = path[noy][nox][0]
+            xxxx = path[noy][nox][1]
+            noy = yyyy
+            nox = xxxx
+        return consist, True
+    else:
+        return [], False
 
 
 
@@ -129,9 +140,6 @@ while k and isbreak():
     
     refresh_cannon(set(consist))
 
-    # for i in field:
-    #     print(i)
-    # print()
 
 maxxx = 0
 for i in field:
