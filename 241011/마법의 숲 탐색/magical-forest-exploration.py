@@ -1,4 +1,5 @@
 import sys
+from collections import deque
 
 ADD_DIR = [(0,0),(0,1),(1,0),(-1,0),(0,-1)]
 
@@ -24,7 +25,7 @@ def v_south(center):
 def v_west(center):
     y,x = center[0], center[1]
     if y + 2 < r + 3 and 0 <= x - 2:
-        if not field[y][x-1] and not field[y+1][x] and not field[y+1][x-1] and not field[y+1][x-2] and not field[y+2][x-1]:
+        if not field[y][x-2] and not field[y-1][x-1] and not field[y+1][x-2] and not field[y+1][x-1] and not field[y+2][x-1]:
             return True
         else:
             return False
@@ -34,7 +35,7 @@ def v_west(center):
 def v_east(center):
     y,x = center[0], center[1]
     if y + 2 < r + 3 and x + 2 < c:
-        if not field[y][x+1] and not field[y+1][x] and not field[y+1][x+1] and not field[y+1][x+2] and not field[y+2][x+1]:
+        if not field[y][x+2] and not field[y-1][x+1] and not field[y+1][x+1] and not field[y+1][x+2] and not field[y+2][x+1]:
             return True
         else:
             return False
@@ -42,9 +43,8 @@ def v_east(center):
         return False
 
 def reset():
-    global field, golem
+    global field
     field = [[False] * c for _ in range(r+3)]
-    golem = []
 
 
 def field_adder(center, ex, fill):
@@ -63,12 +63,12 @@ def goto_end(now_y, now_x, fill):
     visited = [[False] * (c) for _ in range(r+3)]
     visited[now_y][now_x] = True
 
-    queue = [(now_y, now_x, fill)]
+    queue = deque([(now_y, now_x, fill)])
     
-    southest = -1
+    southest = 0
 
     while queue:
-        n_y, n_x, now = queue.pop()
+        n_y, n_x, now = queue.popleft()
         southest = max(n_y, southest)
         for dy,dx in DIR:
             if 3 <= n_y + dy < r+3 and 0 <= n_x + dx < c and not visited[n_y+dy][n_x+dx]:
@@ -80,10 +80,12 @@ def goto_end(now_y, now_x, fill):
                     elif field[n_y+dy][n_x+dx] == -now:
                         queue.append((n_y+dy, n_x+dx, now))
                         visited[n_y+dy][n_x+dx] = True
+                
                 else: # 출구일때 
-                    if field[n_y+dy][n_x+dx] != False:
+                    if field[n_y+dy][n_x+dx] != False: 
                         queue.append((n_y+dy, n_x+dx, field[n_y+dy][n_x+dx])) # 다음위치 받아들이기
                         visited[n_y+dy][n_x+dx] = True
+                    
     
     return southest
                 
@@ -93,13 +95,12 @@ DIR = [(-1,0),(0,1), (1,0), (0,-1)] # 북 동 남 서
 r,c,k = map(int,sys.stdin.readline().split())
 
 field = [[False] * c for _ in range(r+3)] # 차있는지 안차있는지 관리.
-golem = [] # (center, ex)형태로 관리.
 
 ans = 0
 
 for i in range(1,k+1):
     center, ex = map(int,sys.stdin.readline().split())
-    center = (0,center-1)
+    center = (1,center-1)
     
     while True:
         # 남쪽은 center 기준 (2,0),(1,1),(1,-1)가 비어있어야 한다.
@@ -125,10 +126,10 @@ for i in range(1,k+1):
 
     # 골램 배치
     key = field_adder(center, ex, i)
-    golem.append([center, ex])
     # 다 정리후 정령의 이동
     if key:
         ans += goto_end(center[0], center[1],i) - 2
     else:
         reset()
+
 print(ans)
